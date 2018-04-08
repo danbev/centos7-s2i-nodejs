@@ -17,7 +17,7 @@
     "typescript": "~2.7.1",
     "roi": "*",
     "node-gyp": "*",
-    "world": "git@github.com:lance/world.git"
+    "world": "https://github.com/bucharest-gold/world.git"
   },
   "gypfile": true
 }
