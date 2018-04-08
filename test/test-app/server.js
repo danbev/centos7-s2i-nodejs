@@ -4,6 +4,7 @@ const util = require('util');
 const http = require('http');
 const qs = require('querystring');
 const os = require('os');
+const { world } = require('world');
 
 const port = process.env.PORT || process.env.port || process.env.OPENSHIFT_NODEJS_PORT || 8080;
 const ip = process.env.OPENSHIFT_NODEJS_IP || '0.0.0.0';
@@ -25,6 +26,7 @@ const server = http.createServer((req, res) => {
     res.writeHead(200, { 'Content-Type': 'text/plain' });
 
     let out = `This is a node.js echo service
+Message: ${world}
 Host: ${req.headers.host}
 
 node.js Production Mode: ${nodeEnv == 'production' ? 'yes' : 'no'}
