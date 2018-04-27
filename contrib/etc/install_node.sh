@@ -2,6 +2,22 @@
 
 set -ex
 
+git_version=2.17.0
+git_dir=/usr/local/git
+wget -q https://mirrors.edge.kernel.org/pub/software/scm/git/git-${git_version}.tar.gz
+tar xzf git-${git_version}.tar.gz
+pushd git-${git_version}
+make -s prefix=${git_dir} all install
+popd
+rm -rf git-${git_version} git-${git_version}.tar.gz
+
+echo "export PATH=${git_dir}/bin:$PATH" >> /etc/bashrc
+export PATH=${git_dir}/bin:$PATH
+echo "done installing git:"
+git --version
+mkdir -p /usr/local/git/etc/
+touch /usr/local/git/etc/gitconfig
+
 # Ensure git uses https instead of ssh for NPM install
 # See: https://github.com/npm/npm/issues/5257
 echo -e "Setting git config rules"
