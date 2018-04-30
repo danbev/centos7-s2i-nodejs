@@ -5,6 +5,13 @@ const http = require('http');
 const qs = require('querystring');
 const os = require('os');
 
+console.log('Process id:', process.pid);
+
+process.on('SIGTERM', function(signal) {
+  console.log("Server recieved SIGTERM signal");
+  process.exit(18);
+});
+
 const port = process.env.PORT || process.env.port || process.env.OPENSHIFT_NODEJS_PORT || 8080;
 const ip = process.env.OPENSHIFT_NODEJS_IP || '0.0.0.0';
 

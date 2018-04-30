@@ -63,7 +63,16 @@ run_test_application() {
 cleanup() {
   if [ -f $cid_file ]; then
     if container_exists; then
-      docker stop $(cat $cid_file)
+      cid=$(cat $cid_file)
+      docker stop $cid
+      echo "-----------------> $?? <--------------------"
+      # TODO (danbev) Figure out why we cannot get the status from 
+      # the stopped container
+      #exit_code=`docker inspect $cid -f '{{.State.ExitCode}}'`
+      #if [ "$exit_code" != "143" ]; then
+      #  echo "ERROR: The exist status should have been 143."
+      #  exit 1
+      #fi
     fi
   fi
   cids=`ls -1 *.cid 2>/dev/null | wc -l`
@@ -298,7 +307,7 @@ check_result $?
 cleanup
 if image_exists ${APP_IMAGE}; then
   docker rmi -f ${APP_IMAGE}
-  # echo "<><><><><><><><><><><> NOT CLEANING UP åå<><><><><><><><><><><>"
+   #echo "<><><><><><><><><><><> NOT CLEANING UP åå<><><><><><><><><><><>"
 fi
 
 echo "Success!"

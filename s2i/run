@@ -4,6 +4,29 @@ set -e
 
 source /usr/libexec/s2i/env
 
+function send_sigterm()  {
+  echo "Sending SIGTERM to nodemon process $1"
+  kill -s SIGTERM $1
+  wait
+}
+
+term_handler() {
+  echo "Caught SIGTERM signal!"
+  node_pid=`ps -ef | awk '$8 ~ /^\<node\>/ { print $2; }'`
+  if [ "$DEV_MODE" == true ]; then
+    nodemon_pid=`echo $node_pid | awk '{ print $2; }'`
+    if [ -n "${nodemon_pid}" ]; then
+      send_sigterm ${nodemon_pid}
+    fi
+  else
+    if [ -n "${node_pid}" ]; then
+      send_sigterm ${node_pid}
+    fi
+  fi
+}
+
+trap term_handler SIGTERM
+
 # Set the environment for this build configuration to production by default.
 if [ "$NODE_ENV" == "production" ]; then
   export DEV_MODE=false
@@ -24,11 +47,13 @@ run_node() {
     echo "Installing dev dependencies..."
     npm install
     echo "Launching via nodemon..."
-    exec npx nodemon --inspect="$DEBUG_PORT"
+    exec npx nodemon --inspect="$DEBUG_PORT" &
   else
     echo "Launching via npm..."
-    exec npm run -d $NPM_RUN
+    exec npm run -d $NPM_RUN &
   fi
+npm_pid=$!
+wait "$npm_pid"
 }
 
 # Allow debugging the builder image itself, by using:
