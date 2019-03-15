@@ -260,7 +260,7 @@ url.https://github.com.insteadof=ssh://git@github.com"
 }
 
 test_image_usage_label() {
-  local expected="s2i build . nodeshift/centos7-s2i-nodejs myapp"
+  local expected="s2i build . rhoar-nodejs/nodejs-10-rhel8 myapp"
   echo "Checking image usage label ..."
   out=$(docker inspect --format '{{ index .Config.Labels "usage" }}' $BUILDER)
   if ! echo "${out}" | grep -q "${expected}"; then
